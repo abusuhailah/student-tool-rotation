@@ -25,12 +25,18 @@
   const START = ymd(cfg.startDate || "2026-11-01");
 
   // ---------- rotation ----------
-  // Day k after the start: student k has AI Studio, student k-1 has Google Flow.
+  // Every day: 1 student on AI Studio, 2 on Google Flow.
+  // Day k after the start, student k has AI Studio. That student gets Google Flow
+  // the very next day, and once more about halfway through the cycle, so nobody
+  // waits long between turns. With 10 students: AI Studio day 0, Flow days 1 and 6.
+  const FLOW_OFFSETS = N >= 3 ? [1, 1 + Math.ceil((N - 1) / 2)] : N === 2 ? [1] : [];
   const studioIndex = d => mod(d - START, N);
-  const flowIndex = d => (N < 2 ? -1 : mod(d - START - 1, N));
+  const flowIndices = d => FLOW_OFFSETS.map(o => mod(d - START - o, N));
   const nextStudio = (i, from) => from + mod(i - (from - START), N);
-  const nextFlow = (i, from) => from + mod(i + 1 - (from - START), N);
-  const toolOn = (i, d) => (studioIndex(d) === i ? "studio" : flowIndex(d) === i ? "flow" : null);
+  const nextFlow = (i, from) => FLOW_OFFSETS.length
+    ? Math.min(...FLOW_OFFSETS.map(o => from + mod(i + o - (from - START), N)))
+    : null;
+  const toolOn = (i, d) => (studioIndex(d) === i ? "studio" : flowIndices(d).includes(i) ? "flow" : null);
 
   function relLabel(d, today) {
     const diff = d - today;
@@ -88,20 +94,28 @@
 
     const tag = viewDay === today ? ["Live today", false] : viewDay > today ? ["Upcoming", true] : ["Past", true];
 
-    const fill = (key, idx, nextIdx) => {
-      const name = idx >= 0 ? students[idx] : "Nobody";
-      swap($(`${key}-name`), esc(name));
-      swap($(`${key}-avatar`), esc(idx >= 0 ? initials(name) : "–"));
+    const fill = (key, list, nextList) => {
+      const box = $(`${key}-holders`);
+      box.classList.toggle("pair", list.length > 1);
+      swap(box, list.length ? list.map(idx => {
+        const name = students[idx];
+        return `<div class="holder${me && name === me ? " is-me" : ""}">
+            <div class="avatar">${esc(initials(name))}</div>
+            <div class="holder-text">
+              <p class="holder-label">Access belongs to</p>
+              <p class="holder-name">${esc(name)}</p>
+            </div>
+          </div>`;
+      }).join("") : `<p class="holder-name">Nobody</p>`);
       const t = $(`${key}-tag`);
       t.textContent = tag[0];
       t.classList.toggle("off", tag[1]);
-      $(`${key}-next`).innerHTML = nextIdx >= 0
-        ? `Next day → <strong>${esc(students[nextIdx])}</strong>`
+      $(`${key}-next`).innerHTML = nextList.length
+        ? `Next day → ${nextList.map(i => `<strong>${esc(students[i])}</strong>`).join(" &amp; ")}`
         : "";
-      $(`${key}-name`).closest(".tool-card").classList.toggle("is-me", !!me && name === me);
     };
-    fill("studio", studioIndex(viewDay), studioIndex(viewDay + 1));
-    fill("flow", flowIndex(viewDay), flowIndex(viewDay + 1));
+    fill("studio", [studioIndex(viewDay)], [studioIndex(viewDay + 1)]);
+    fill("flow", flowIndices(viewDay), flowIndices(viewDay + 1));
   }
 
   // ---------- my schedule ----------
@@ -117,7 +131,7 @@
     if (tool) {
       status.innerHTML = `<p class="small">Today, ${esc(weekday(today))}</p>
         <p class="big">You have ${TOOL_NAME[tool]}</p>
-        <p class="small">${tool === "studio" ? "Tomorrow you move to Google Flow." : "Enjoy it — then you rest until your next turn."}</p>`;
+        <p class="small">${tool === "studio" ? "Tomorrow you move to Google Flow." : "Enjoy it — your upcoming turns are listed here."}</p>`;
     } else {
       const ns = nextStudio(i, today);
       status.innerHTML = `<p class="small">Today, ${esc(weekday(today))}</p>
@@ -148,14 +162,14 @@
     let html = "";
     for (let k = 0; k < 7; k++) {
       const d = monday + k;
-      const s = studioIndex(d), f = flowIndex(d);
       const cls = ["day", d === today ? "today" : "", d === viewDay ? "selected" : ""].join(" ");
-      const slot = (type, idx) => idx < 0 ? "" :
-        `<span class="slot ${type}${me && students[idx] === me ? " mine" : ""}"><small>${TOOL_NAME[type]}</small><b>${esc(students[idx])}</b></span>`;
+      const slot = (type, list) => !list.length ? "" :
+        `<span class="slot ${type}"><small>${TOOL_NAME[type]}</small>${list.map(idx =>
+          `<b${me && students[idx] === me ? ' class="mine"' : ""}>${esc(students[idx])}</b>`).join("")}</span>`;
       html += `<button class="${cls}" role="listitem" data-day="${d}" style="animation-delay:${k * 0.05}s">
           <span class="day-name">${esc(weekday(d))}</span>
           <span class="day-date">${esc(shortDate(d))}</span>
-          ${slot("studio", s)}${slot("flow", f)}
+          ${slot("studio", [studioIndex(d)])}${slot("flow", flowIndices(d))}
         </button>`;
     }
     $("week").innerHTML = html;
@@ -180,7 +194,7 @@
           ${chip}
           <div class="student-next">
             <span>AI Studio: <b>${esc(whenText(ns, today))}</b></span>
-            ${N > 1 ? `<span>Google Flow: <b>${esc(whenText(nf, today))}</b></span>` : ""}
+            ${nf !== null ? `<span>Google Flow: <b>${esc(whenText(nf, today))}</b></span>` : ""}
           </div>
         </div>`;
     }).join("");
@@ -230,7 +244,8 @@
     document.querySelector("main").innerHTML = `<p class="empty">No students yet — add names in students.js.</p>`;
     return;
   }
-  $("all-sub").textContent = `${N} students · each person gets AI Studio, then Google Flow the next day, every ${N} days.`;
+  $("all-sub").textContent = `${N} students · every day 1 on AI Studio and ${FLOW_OFFSETS.length} on Google Flow. ` +
+    `After your AI Studio day you get Google Flow the next day${FLOW_OFFSETS.length > 1 ? ", and once more later in the cycle" : ""}.`;
   renderAll();
   tick();
   setInterval(tick, 1000);

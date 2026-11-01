@@ -157,7 +157,16 @@ button, select, input { font: inherit; color: inherit; }
 }
 .live-tag.off { color: var(--muted); background: var(--surface-2); }
 
-.holder { display: flex; align-items: center; gap: 16px; margin: clamp(22px, 4vw, 34px) 0 18px; }
+.holders { display: grid; gap: 14px; margin: clamp(22px, 4vw, 34px) 0 18px; min-height: 72px; align-content: center; }
+.holder { display: flex; align-items: center; gap: 16px; }
+.holders.pair { gap: 10px; margin-top: clamp(16px, 3vw, 24px); }
+.holders.pair .avatar { width: 54px; height: 54px; font-size: 1.1rem; }
+.holders.pair .holder-name { font-size: clamp(1.25rem, 2.8vw, 1.6rem); }
+.holders.pair .holder + .holder .holder-label { display: none; }
+.holder.is-me .holder-label::after {
+  content: "You"; margin-left: 8px; padding: 1px 8px; border-radius: 999px; letter-spacing: .06em;
+  color: #0b0820; background: #fff;
+}
 .avatar {
   flex: none; width: 72px; height: 72px; border-radius: 50%;
   display: grid; place-items: center; font-weight: 800; font-size: 1.5rem; color: #fff;
@@ -167,11 +176,6 @@ button, select, input { font: inherit; color: inherit; }
 .holder-text { min-width: 0; }
 .holder-label { margin: 0; color: var(--muted); font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
 .holder-name { margin: 2px 0 0; font-size: clamp(1.5rem, 3.6vw, 2.2rem); font-weight: 800; letter-spacing: -.025em; line-height: 1.15; overflow-wrap: anywhere; }
-.tool-card.is-me { border-color: rgba(255, 255, 255, .35); }
-.tool-card.is-me .holder-label::after {
-  content: "You"; margin-left: 8px; padding: 1px 8px; border-radius: 999px; letter-spacing: .06em;
-  color: #0b0820; background: #fff;
-}
 .tool-next { margin: 0; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: .9rem; }
 .tool-next strong { color: var(--text); font-weight: 600; }
 
@@ -250,7 +254,7 @@ button, select, input { font: inherit; color: inherit; }
 .slot b { font-weight: 600; overflow-wrap: anywhere; line-height: 1.25; }
 .slot.studio { background: rgba(155, 123, 255, .14); color: #ddd2ff; }
 .slot.flow { background: rgba(43, 224, 196, .1); color: #b4f6ea; }
-.slot.mine { box-shadow: 0 0 0 1.5px #fff inset; }
+.slot b.mine { margin: 0 -4px; padding: 0 4px; border-radius: 6px; box-shadow: 0 0 0 1.5px #fff inset; }
 
 /* ---------- students ---------- */
 .students { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
