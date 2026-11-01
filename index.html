@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tool Rotation · AbuSuhailah</title>
+  <meta name="description" content="Daily rotation of AI Studio and Google Flow access for AbuSuhailah students.">
+  <meta name="theme-color" content="#0b0820">
+  <link rel="icon" type="image/png" href="assets/abusuhailah-logo-original.png">
+  <meta property="og:title" content="Tool Rotation · AbuSuhailah">
+  <meta property="og:description" content="See who has AI Studio and Google Flow today.">
+  <meta property="og:image" content="assets/abusuhailah-logo-original.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="aurora" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+  </div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8b6cf6"/>
+        <stop offset="1" stop-color="#4a2bd0"/>
+      </linearGradient>
+      <symbol id="logo-mark" viewBox="740 700 455 370">
+        <path d="M838 840 L870 762 Q898 712 948 710 L1032 710 L980 840 Z"/>
+        <path d="M802 930 L944 930 L912 1010 Q882 1058 826 1060 L749 1060 Z"/>
+        <path d="M1098 885 Q1104 885 1107 893 L1117 917 Q1129 943 1155 955 L1177 965 Q1185 970 1177 977 L1155 987 Q1129 999 1117 1025 L1107 1049 Q1098 1062 1089 1049 L1079 1025 Q1067 999 1041 987 L1019 977 Q1011 970 1019 965 L1041 955 Q1067 943 1079 917 L1089 893 Q1092 885 1098 885 Z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="AbuSuhailah home">
+      <svg class="brand-mark"><use href="#logo-mark" fill="url(#brand)"/></svg>
+      <span class="brand-text">AbuSuhailah</span>
+    </a>
+    <div class="clock" aria-live="off">
+      <span class="clock-dot"></span>
+      <span id="clock-time">--:--</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero reveal">
+      <p class="eyebrow">Daily tool rotation</p>
+      <h1 id="hero-day">Today</h1>
+      <p class="hero-date" id="hero-date"></p>
+
+      <div class="day-nav" role="group" aria-label="Change day">
+        <button class="icon-btn" id="prev-day" aria-label="Previous day">‹</button>
+        <button class="pill-btn" id="go-today">Back to today</button>
+        <button class="icon-btn" id="next-day" aria-label="Next day">›</button>
+      </div>
+    </section>
+
+    <section class="spotlight" aria-label="Who has which tool">
+      <article class="tool-card studio reveal" style="--d:.1s">
+        <div class="tool-glow"></div>
+        <div class="tool-head">
+          <span class="tool-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+          </span>
+          <div>
+            <h2>AI Studio</h2>
+            <p class="tool-sub">Google AI Studio · paid</p>
+          </div>
+          <span class="live-tag" id="studio-tag">Live today</span>
+        </div>
+        <div class="holder">
+          <div class="avatar" id="studio-avatar">–</div>
+          <div class="holder-text">
+            <p class="holder-label">Access belongs to</p>
+            <p class="holder-name" id="studio-name">–</p>
+          </div>
+        </div>
+        <p class="tool-next" id="studio-next"></p>
+      </article>
+
+      <article class="tool-card flow reveal" style="--d:.2s">
+        <div class="tool-glow"></div>
+        <div class="tool-head">
+          <span class="tool-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 7h10a4 4 0 010 8H8a2 2 0 000 4h12M17 4l3 3-3 3"/></svg>
+          </span>
+          <div>
+            <h2>Google Flow</h2>
+            <p class="tool-sub">Google Flow · paid</p>
+          </div>
+          <span class="live-tag" id="flow-tag">Live today</span>
+        </div>
+        <div class="holder">
+          <div class="avatar" id="flow-avatar">–</div>
+          <div class="holder-text">
+            <p class="holder-label">Access belongs to</p>
+            <p class="holder-name" id="flow-name">–</p>
+          </div>
+        </div>
+        <p class="tool-next" id="flow-next"></p>
+      </article>
+    </section>
+
+    <section class="panel me reveal" style="--d:.3s" aria-labelledby="me-title">
+      <div class="panel-head">
+        <div>
+          <h3 id="me-title">Find my schedule</h3>
+          <p class="muted">Pick your name to see your days and highlight them everywhere.</p>
+        </div>
+        <label class="select">
+          <span class="sr-only">Your name</span>
+          <select id="me-select"><option value="">Select your name</option></select>
+        </label>
+      </div>
+      <div class="me-body" id="me-body" hidden>
+        <div class="me-status" id="me-status"></div>
+        <div class="me-upcoming" id="me-upcoming"></div>
+      </div>
+    </section>
+
+    <section class="panel reveal" style="--d:.4s" aria-labelledby="week-title">
+      <div class="panel-head">
+        <div>
+          <h3 id="week-title">Next 7 days</h3>
+          <p class="muted" id="week-range"></p>
+        </div>
+        <div class="day-nav small">
+          <button class="icon-btn" id="prev-week" aria-label="Previous week">‹</button>
+          <button class="pill-btn" id="this-week">From today</button>
+          <button class="icon-btn" id="next-week" aria-label="Next week">›</button>
+        </div>
+      </div>
+      <div class="week" id="week" role="list"></div>
+    </section>
+
+    <section class="panel reveal" style="--d:.5s" aria-labelledby="all-title">
+      <div class="panel-head">
+        <div>
+          <h3 id="all-title">All students</h3>
+          <p class="muted" id="all-sub">Who is on which tool, and when each person is next.</p>
+        </div>
+        <label class="search">
+          <span class="sr-only">Search students</span>
+          <input id="search" type="search" placeholder="Search a name…" autocomplete="off">
+        </label>
+      </div>
+      <div class="students" id="students" role="list"></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <svg class="foot-mark"><use href="#logo-mark" fill="url(#brand)"/></svg>
+    <span>AbuSuhailah · Tool rotation loops automatically every day</span>
+  </footer>
+
+  <script src="students.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
