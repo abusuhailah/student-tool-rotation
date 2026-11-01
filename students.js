@@ -20,13 +20,13 @@ window.ROTATION_CONFIG = {
   timeZone: "Africa/Lagos",
   students: [
     "Abubakar Said Dialogue",
-    "Auta Tik",
-    "Boss Baby 2",
+    "Auta",
+    "Boss Baby",
     "Fadila Baba",
     "Fatimah Uthman Brah",
-    "Khalid Iraqi",
-    "Maddo Kinkinau",
-    "Muslimat TikTok",
+    "Khalid",
+    "Baddo",
+    "Muslimat",
     "Nalitee",
     "Xyy Sambo"
     // Sallau and Muheebbah will be added later
